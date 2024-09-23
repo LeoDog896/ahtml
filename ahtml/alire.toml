@@ -1,0 +1,11 @@
+name = "ahtml"
+description = "HTML generation utils"
+version = "0.1.0-dev"
+
+authors = ["Tali Auster"]
+maintainers = ["Tali Auster <me@tali.network>"]
+maintainers-logins = ["atalii"]
+licenses = "MPL-2.0"
+website = ""
+tags = []
+

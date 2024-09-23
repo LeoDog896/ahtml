@@ -1,0 +1,9 @@
+/tests/obj/
+/tests/bin/
+/tests/alire/
+/tests/config/
+/ahtml/obj/
+/ahtml/bin/
+/ahtml/alire/
+/ahtml/config/
+*~
