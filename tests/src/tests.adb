@@ -8,14 +8,13 @@ use Ada.Text_IO;
 with AHTML.Node; use AHTML.Node;
 
 procedure Tests is
-   Basic_Test_Case : constant AHTML.Node.Node := AHTML.Node.Mk_Node ("meow");
-   With_Attr : constant AHTML.Node.Node := Basic_Test_Case.With_Attribute
-      (AHTML.Node.Mk_Attr ("a", "b"));
-
-   With_Child : constant AHTML.Node.Node := AHTML.Node.With_Child
-      (Basic_Test_Case, With_Attr);
+   Doc : AHTML.Node.Doc := AHTML.Node.Null_Doc;
+   Root : constant AHTML.Node.Node_Handle := Doc.Mk_Node ("html");
+   Body_Node : constant AHTML.Node.Node_Handle := Doc.Mk_Node ("body");
 begin
-   Put_Line (AHTML.Node.SU.To_String (AHTML.Node.To_String (Basic_Test_Case)));
-   Put_Line (AHTML.Node.SU.To_String (AHTML.Node.To_String (With_Attr)));
-   Put_Line (AHTML.Node.SU.To_String (AHTML.Node.To_String (With_Child)));
+   Put_Line (AHTML.Node.SU.To_String (Doc.To_String (Root)));
+
+   Doc.With_Child (Root, Body_Node);
+   Put_Line (AHTML.Node.SU.To_String (Doc.To_String (Root)));
+   --  Put_Line (AHTML.Node.SU.To_String (AHTML.Node.To_String (With_Child)));
 end Tests;

@@ -9,35 +9,55 @@ package body AHTML.Node is
    use SU;
    use Ada.Containers;
 
-   function Mk_Node (Name : String) return Node is
-      (Mk_Node (SU.To_Unbounded_String (Name)));
+   function Null_Doc return Doc is
+      ((Inner => Node_Vec.Empty_Vector));
 
-   function Mk_Node (Name : SU.Unbounded_String) return Node
+   function Mk_Node (D : in out Doc; Name : String) return Node_Handle is
+      (D.Mk_Node (SU.To_Unbounded_String (Name)));
+
+   function Mk_Node (D : in out Doc; Name : SU.Unbounded_String)
+      return Node_Handle
    is
       Attrs : Attrs_Vec.Vector;
-      Children : Node_Vec.Vector;
+      Children : Index_Vec.Vector;
+      N : constant Node :=
+         (Name => Name, Attrs => Attrs, Children => Children);
    begin
-      return (Name => Name, Attrs => Attrs, Children => Children);
+      D.Inner.Append (N);
+      return D.Inner.Last_Index;
    end Mk_Node;
 
    function Mk_Attr (Key, Val : String) return Attr is
       (Key => SU.To_Unbounded_String (Key),
       Val => SU.To_Unbounded_String (Val));
 
-   function With_Child (N : Node; C : Node) return Node is
-      (Name => N.Name,
-      Attrs => N.Attrs,
-      Children => N.Children & new Node'(C));
-
-   function With_Attribute (N : Node; A : Attr) return Node is
-      (Name => N.Name, Attrs => N.Attrs & A, Children => N.Children);
-
-   function To_String (N : Node) return SU.Unbounded_String
+   procedure With_Child (D : in out Doc; N, C : Node_Handle)
    is
-      Tmp : SU.Unbounded_String := "<" & N.Name;
-      Have_Children : constant Boolean := N.Children.Length /= 0;
+      procedure Update (N : in out Node) is
+      begin
+         N.Children.Append (C);
+      end Update;
    begin
-      for Attr of N.Attrs loop
+      D.Inner.Update_Element (N, Update'Access);
+   end With_Child;
+
+   procedure With_Attribute (D : in out Doc; N : Node_Handle; A : Attr)
+   is
+      procedure Update (N : in out Node) is
+      begin
+         N.Attrs.Append (A);
+      end Update;
+   begin
+      D.Inner.Update_Element (N, Update'Access);
+   end With_Attribute;
+
+   function To_String (D : Doc; N : Node_Handle) return SU.Unbounded_String
+   is
+      Target : constant Node := D.Inner (N);
+      Tmp : SU.Unbounded_String := "<" & Target.Name;
+      Have_Children : constant Boolean := Target.Children.Length /= 0;
+   begin
+      for Attr of Target.Attrs loop
          Tmp := @ & " " & Attr.Key & "=" & '"' & Attr.Val & '"';
       end loop;
 
@@ -45,12 +65,12 @@ package body AHTML.Node is
          Tmp := @ & ">";
       end if;
 
-      for Child of N.Children loop
-         Tmp := @ & Child.To_String;
+      for Child of Target.Children loop
+         Tmp := @ & D.To_String (Child);
       end loop;
 
       if Have_Children then
-         Tmp := @ & ("</" & N.Name & ">");
+         Tmp := @ & ("</" & Target.Name & ">");
       else
          Tmp := @ & "/>";
       end if;
