@@ -2,7 +2,7 @@
 --  License, v. 2.0. If a copy of the MPL was not distributed with this
 --  file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-package body AHTML is
+package body AHTML.Node is
 
    use Attrs_Vec;
    use Node_Vec;
@@ -58,4 +58,4 @@ package body AHTML is
       return Tmp;
    end To_String;
 
-end AHTML;
+end AHTML.Node;
