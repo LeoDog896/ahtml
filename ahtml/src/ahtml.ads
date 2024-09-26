@@ -1,12 +1,12 @@
--- This Source Code Form is subject to the terms of the Mozilla Public
--- License, v. 2.0. If a copy of the MPL was not distributed with this
--- file, You can obtain one at https://mozilla.org/MPL/2.0/.
+--  This Source Code Form is subject to the terms of the Mozilla Public
+--  License, v. 2.0. If a copy of the MPL was not distributed with this
+--  file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 with Ada.Strings.Unbounded;
 with Ada.Containers.Vectors;
 
 package AHTML is
-   -- TODO: wrap this type and HTML escape what needs to be escaped
+   --  TODO: wrap this type and HTML escape what needs to be escaped
    package SU renames Ada.Strings.Unbounded;
 
    type Node is tagged private;

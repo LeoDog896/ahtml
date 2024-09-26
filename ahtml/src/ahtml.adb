@@ -1,6 +1,6 @@
--- This Source Code Form is subject to the terms of the Mozilla Public
--- License, v. 2.0. If a copy of the MPL was not distributed with this
--- file, You can obtain one at https://mozilla.org/MPL/2.0/.
+--  This Source Code Form is subject to the terms of the Mozilla Public
+--  License, v. 2.0. If a copy of the MPL was not distributed with this
+--  file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 package body AHTML is
 
@@ -46,7 +46,7 @@ package body AHTML is
       end if;
 
       for Child of N.Children loop
-          Tmp := @ & Child.To_String;
+         Tmp := @ & Child.To_String;
       end loop;
 
       if Have_Children then
