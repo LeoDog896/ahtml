@@ -27,6 +27,7 @@ package AHTML.Node is
       (Key : AHTML.Strings.Name; Val : AHTML.Strings.Cooked)
       return Attr;
 
+   procedure With_Doctype (D : in out Doc; T : AHTML.Strings.Cooked);
    procedure With_Child (D : in out Doc; N, C : Node_Handle);
    procedure With_Attribute (D : in out Doc; N : Node_Handle; A : Attr);
 
@@ -34,6 +35,13 @@ package AHTML.Node is
       return AHTML.Strings.Raw;
 
 private
+
+   type Maybe_Doctype (Present : Boolean := False) is record
+      case Present is
+         when True => Doctype : AHTML.Strings.Cooked;
+         when False => null;
+      end case;
+   end record;
 
    type Node_Handle is new Natural;
 
@@ -53,6 +61,7 @@ private
       (Index_Type => Node_Handle, Element_Type => Node);
 
    type Doc is tagged record
+      Doctype : Maybe_Doctype;
       Inner : Node_Vec.Vector;
    end record;
 

@@ -11,7 +11,8 @@ package body AHTML.Node is
    use Node_Vec;
 
    function Null_Doc return Doc is
-      ((Inner => Node_Vec.Empty_Vector));
+      ((Inner => Node_Vec.Empty_Vector,
+      Doctype => (Present => False)));
 
    function Mk_Node (D : in out Doc; Name : String) return Node_Handle is
       (D.Mk_Node
@@ -54,31 +55,48 @@ package body AHTML.Node is
       D.Inner.Update_Element (N, Update'Access);
    end With_Attribute;
 
+   procedure With_Doctype (D : in out Doc; T : AHTML.Strings.Cooked)
+   is begin
+      D.Doctype := (Present => True, Doctype => T);
+   end With_Doctype;
+
    function To_String (D : Doc; N : Node_Handle) return AHTML.Strings.Raw
    is
-      Target : constant Node := D.Inner (N);
-      Tmp : AHTML.Strings.Raw := "<" & AHTML.Strings.Raw (Target.Name);
-      Have_Children : constant Boolean := Target.Children.Length /= 0;
+      Tmp : AHTML.Strings.Raw;
+
+      procedure Stringify_Node (Target : Node)
+      is
+         Have_Children : constant Boolean := Target.Children.Length /= 0;
+      begin
+         Tmp := @ & "<" & AHTML.Strings.Raw (Target.Name);
+
+         for Attr of Target.Attrs loop
+            Tmp := @ & " " &
+               AHTML.Strings.Raw (Attr.Key) & "=" & '"' &
+               AHTML.Strings.Raw (Attr.Val) & '"';
+         end  loop;
+
+         if Have_Children then
+            Tmp := @ & ">";
+         end if;
+
+         for Child of Target.Children loop
+            Stringify_Node (D.Inner (Child));
+         end loop;
+
+         if Have_Children then
+            Tmp := @ & ("</" & AHTML.Strings.Raw (Target.Name) & ">");
+         else
+            Tmp := @ & "/>";
+         end if;
+      end Stringify_Node;
+
    begin
-      for Attr of Target.Attrs loop
-         Tmp := @ & " " &
-            AHTML.Strings.Raw (Attr.Key) & "=" & '"' &
-            AHTML.Strings.Raw (Attr.Val) & '"';
-      end loop;
-
-      if Have_Children then
-         Tmp := @ & ">";
+      if D.Doctype.Present then
+         Tmp := @ & "<!DOCTYPE " & AHTML.Strings.Raw (D.Doctype.Doctype) & ">";
       end if;
 
-      for Child of Target.Children loop
-         Tmp := @ & D.To_String (Child);
-      end loop;
-
-      if Have_Children then
-         Tmp := @ & ("</" & AHTML.Strings.Raw (Target.Name) & ">");
-      else
-         Tmp := @ & "/>";
-      end if;
+      Stringify_Node (D.Inner (N));
 
       return Tmp;
    end To_String;

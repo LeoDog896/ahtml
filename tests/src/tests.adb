@@ -25,4 +25,7 @@ begin
 
    Doc.With_Attribute (Body_Node, Attr);
    Put_Line (AHTML.Strings.To_String (Doc.To_String (Root)));
+
+   Doc.With_Doctype (AHTML.Strings.To_Unbounded_String ("html"));
+   Put_Line (AHTML.Strings.To_String (Doc.To_String (Root)));
 end Tests;
