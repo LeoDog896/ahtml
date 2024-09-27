@@ -4,18 +4,21 @@
 
 package body AHTML.Node is
 
+   use Ada.Containers;
+
+   use AHTML.Strings;
    use Attrs_Vec;
    use Node_Vec;
-   use SU;
-   use Ada.Containers;
 
    function Null_Doc return Doc is
       ((Inner => Node_Vec.Empty_Vector));
 
    function Mk_Node (D : in out Doc; Name : String) return Node_Handle is
-      (D.Mk_Node (SU.To_Unbounded_String (Name)));
+      (D.Mk_Node
+         (AHTML.Strings.Name
+            (AHTML.Strings.SU.To_Unbounded_String (Name))));
 
-   function Mk_Node (D : in out Doc; Name : SU.Unbounded_String)
+   function Mk_Node (D : in out Doc; Name : AHTML.Strings.Name)
       return Node_Handle
    is
       Attrs : Attrs_Vec.Vector;
@@ -27,9 +30,9 @@ package body AHTML.Node is
       return D.Inner.Last_Index;
    end Mk_Node;
 
-   function Mk_Attr (Key, Val : String) return Attr is
-      (Key => SU.To_Unbounded_String (Key),
-      Val => SU.To_Unbounded_String (Val));
+   function Mk_Attr
+      (Key : AHTML.Strings.Name; Val : AHTML.Strings.Cooked)
+      return Attr is (Key => Key, Val => Val);
 
    procedure With_Child (D : in out Doc; N, C : Node_Handle)
    is
@@ -51,14 +54,16 @@ package body AHTML.Node is
       D.Inner.Update_Element (N, Update'Access);
    end With_Attribute;
 
-   function To_String (D : Doc; N : Node_Handle) return SU.Unbounded_String
+   function To_String (D : Doc; N : Node_Handle) return AHTML.Strings.Raw
    is
       Target : constant Node := D.Inner (N);
-      Tmp : SU.Unbounded_String := "<" & Target.Name;
+      Tmp : AHTML.Strings.Raw := "<" & AHTML.Strings.Raw (Target.Name);
       Have_Children : constant Boolean := Target.Children.Length /= 0;
    begin
       for Attr of Target.Attrs loop
-         Tmp := @ & " " & Attr.Key & "=" & '"' & Attr.Val & '"';
+         Tmp := @ & " " &
+            AHTML.Strings.Raw (Attr.Key) & "=" & '"' &
+            AHTML.Strings.Raw (Attr.Val) & '"';
       end loop;
 
       if Have_Children then
@@ -70,7 +75,7 @@ package body AHTML.Node is
       end loop;
 
       if Have_Children then
-         Tmp := @ & ("</" & Target.Name & ">");
+         Tmp := @ & ("</" & AHTML.Strings.Raw (Target.Name) & ">");
       else
          Tmp := @ & "/>";
       end if;

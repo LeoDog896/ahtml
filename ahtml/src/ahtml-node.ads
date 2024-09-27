@@ -2,35 +2,36 @@
 --  License, v. 2.0. If a copy of the MPL was not distributed with this
 --  file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-with Ada.Strings.Unbounded;
 with Ada.Containers.Vectors;
 
+with AHTML.Strings;
+
 package AHTML.Node is
-   --  TODO: wrap this type and HTML escape what needs to be escaped
-   package SU renames Ada.Strings.Unbounded;
 
    type Node_Handle is private;
    type Doc is tagged private;
 
    type Attr is record
-      Key : SU.Unbounded_String;
-      Val : SU.Unbounded_String;
+      Key : AHTML.Strings.Name;
+      Val : AHTML.Strings.Cooked;
    end record;
 
    function Null_Doc return Doc;
 
    function Mk_Node (D : in out Doc; Name : String) return Node_Handle;
    function Mk_Node
-      (D : in out Doc; Name : SU.Unbounded_String)
+      (D : in out Doc; Name : AHTML.Strings.Name)
       return Node_Handle;
 
-   function Mk_Attr (Key, Val : String) return Attr;
+   function Mk_Attr
+      (Key : AHTML.Strings.Name; Val : AHTML.Strings.Cooked)
+      return Attr;
 
    procedure With_Child (D : in out Doc; N, C : Node_Handle);
    procedure With_Attribute (D : in out Doc; N : Node_Handle; A : Attr);
 
    function To_String (D : Doc; N : Node_Handle)
-      return SU.Unbounded_String;
+      return AHTML.Strings.Raw;
 
 private
 
@@ -43,7 +44,7 @@ private
       (Index_Type => Node_Handle, Element_Type => Node_Handle);
 
    type Node is tagged record
-      Name : SU.Unbounded_String;
+      Name : AHTML.Strings.Name;
       Attrs : Attrs_Vec.Vector;
       Children : Index_Vec.Vector;
    end record;
