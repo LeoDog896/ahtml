@@ -12,10 +12,17 @@ procedure Tests is
    Doc : AHTML.Node.Doc := AHTML.Node.Null_Doc;
    Root : constant AHTML.Node.Node_Handle := Doc.Mk_Node ("html");
    Body_Node : constant AHTML.Node.Node_Handle := Doc.Mk_Node ("body");
+
+   Attr : constant AHTML.Node.Attr :=
+      AHTML.Node.Mk_Attr
+         (AHTML.Strings.To_Unbounded_String ("a"),
+         AHTML.Strings.To_Unbounded_String ("b"));
 begin
    Put_Line (AHTML.Strings.To_String (Doc.To_String (Root)));
 
    Doc.With_Child (Root, Body_Node);
    Put_Line (AHTML.Strings.To_String (Doc.To_String (Root)));
-   --  Put_Line (AHTML.Node.SU.To_String (AHTML.Node.To_String (With_Child)));
+
+   Doc.With_Attribute (Body_Node, Attr);
+   Put_Line (AHTML.Strings.To_String (Doc.To_String (Root)));
 end Tests;
