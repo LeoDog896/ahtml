@@ -2,9 +2,9 @@
 /tests/bin/
 /tests/alire/
 /tests/config/
-/ahtml/obj/
-/ahtml/bin/
-/ahtml/alire/
-/ahtml/config/
-/ahtml/lib
+/obj/
+/bin/
+/alire/
+/config/
+/lib
 *~

@@ -15,4 +15,4 @@ executables = ["tests"]
 ahtml = "*"
 
 [[pins]]
-ahtml = { path='../ahtml' }
+ahtml = { path='..' }
