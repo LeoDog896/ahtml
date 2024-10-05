@@ -28,6 +28,11 @@ package AHTML.Node is
       (D : in out Doc; Name : AHTML.Strings.Name)
       return Node_Handle;
 
+   function Mk_Text (D : in out Doc; Content : String) return Node_Handle;
+   function Mk_Text
+      (D : in out Doc; Content : AHTML.Strings.Cooked)
+      return Node_Handle;
+
    function Mk_Attr
       (Key : AHTML.Strings.Name; Val : AHTML.Strings.Cooked)
       return Attr;

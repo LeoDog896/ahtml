@@ -12,6 +12,7 @@ procedure Tests is
    Doc : AHTML.Node.Doc := AHTML.Node.Null_Doc;
    Root : constant AHTML.Node.Node_Handle := Doc.Mk_Element ("html");
    Body_Node : constant AHTML.Node.Node_Handle := Doc.Mk_Element ("body");
+   Text_Node : constant AHTML.Node.Node_Handle := Doc.Mk_Text ("test");
 
    Attr : constant AHTML.Node.Attr :=
       AHTML.Node.Mk_Attr
@@ -29,6 +30,9 @@ begin
    Put_Line (AHTML.Strings.To_String (Doc.To_String (Root)));
 
    Doc.With_Attribute (Body_Node, Attr);
+   Put_Line (AHTML.Strings.To_String (Doc.To_String (Root)));
+
+   Doc.With_Child (Body_Node, Text_Node);
    Put_Line (AHTML.Strings.To_String (Doc.To_String (Root)));
 
    Doc.With_Doctype (AHTML.Strings.To_Unbounded_String ("html"));

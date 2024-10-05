@@ -36,6 +36,20 @@ package body AHTML.Node is
       return D.Inner.Last_Index;
    end Mk_Element;
 
+   function Mk_Text (D : in out Doc; Content : String) return Node_Handle is
+      (D.Mk_Text
+         (AHTML.Strings.Cooked
+             (AHTML.Strings.SU.To_Unbounded_String (Content))));
+
+   function Mk_Text (D : in out Doc; Content : AHTML.Strings.Cooked)
+      return Node_Handle
+   is
+      N : constant Node := (Inner => (K => Text, Content => Content));
+   begin
+      D.Inner.Append (N);
+      return D.Inner.Last_Index;
+   end Mk_Text;
+
    function Mk_Attr
       (Key : AHTML.Strings.Name; Val : AHTML.Strings.Cooked)
       return Attr is (Key => Key, Val => Val);
@@ -69,14 +83,17 @@ package body AHTML.Node is
    is
       Tmp : AHTML.Strings.Raw;
 
-      procedure Stringify_Node (Target : Node)
+      procedure Stringify_Element (Target : Node_Inner);
+      procedure Stringify_Node (Target : Node);
+
+      procedure Stringify_Element (Target : Node_Inner)
       is
          Have_Children : constant Boolean :=
-            Target.Inner.Children.Length /= 0;
+            Target.Children.Length /= 0;
       begin
-         Tmp := @ & "<" & AHTML.Strings.Raw (Target.Inner.Name);
+         Tmp := @ & "<" & AHTML.Strings.Raw (Target.Name);
 
-         for Attr of Target.Inner.Attrs loop
+         for Attr of Target.Attrs loop
             Tmp := @ & " " &
                AHTML.Strings.Raw (Attr.Key) & "=" & '"' &
                AHTML.Strings.Raw (Attr.Val) & '"';
@@ -86,15 +103,24 @@ package body AHTML.Node is
             Tmp := @ & ">";
          end if;
 
-         for Child of Target.Inner.Children loop
+         for Child of Target.Children loop
             Stringify_Node (D.Inner (Child));
          end loop;
 
          if Have_Children then
-            Tmp := @ & ("</" & AHTML.Strings.Raw (Target.Inner.Name) & ">");
+            Tmp := @ & ("</" & AHTML.Strings.Raw (Target.Name) & ">");
          else
             Tmp := @ & "/>";
          end if;
+      end Stringify_Element;
+
+      procedure Stringify_Node (Target : Node) is
+      begin
+         case Target.Inner.K is
+            when Element => Stringify_Element (Target.Inner);
+	    when Text =>
+	       Tmp := @ & AHTML.Strings.Raw (Target.Inner.Content);
+	 end case;
       end Stringify_Node;
 
    begin
