@@ -17,6 +17,11 @@ procedure Tests is
       AHTML.Node.Mk_Attr
          (AHTML.Strings.To_Unbounded_String ("a"),
          AHTML.Strings.To_Unbounded_String ("b"));
+
+   HTML_Doc : AHTML.Node.Doc := AHTML.Node.HTML_Doc;
+   HTML_Root : constant AHTML.Node.Node_Handle
+      := HTML_Doc.Mk_Node ("html");
+
 begin
    Put_Line (AHTML.Strings.To_String (Doc.To_String (Root)));
 
@@ -28,4 +33,6 @@ begin
 
    Doc.With_Doctype (AHTML.Strings.To_Unbounded_String ("html"));
    Put_Line (AHTML.Strings.To_String (Doc.To_String (Root)));
+
+   Put_Line (AHTML.Strings.To_String (HTML_Doc.To_String (HTML_Root)));
 end Tests;

@@ -14,6 +14,14 @@ package body AHTML.Node is
       ((Inner => Node_Vec.Empty_Vector,
       Doctype => (Present => False)));
 
+   function HTML_Doc return Doc
+   is
+      D : Doc := Null_Doc;
+   begin
+      D.With_Doctype (To_Unbounded_String ("html"));
+      return D;
+   end HTML_Doc;
+
    function Mk_Node (D : in out Doc; Name : String) return Node_Handle is
       (D.Mk_Node
          (AHTML.Strings.Name

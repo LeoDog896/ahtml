@@ -16,7 +16,12 @@ package AHTML.Node is
       Val : AHTML.Strings.Cooked;
    end record;
 
+   --  Null_Doc returns an empty doc.
    function Null_Doc return Doc;
+
+   --  HTML_Doc is identical to Null_Doc except that the DOCTYPE
+   --  is set to html.
+   function HTML_Doc return Doc;
 
    function Mk_Node (D : in out Doc; Name : String) return Node_Handle;
    function Mk_Node
