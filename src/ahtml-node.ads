@@ -23,8 +23,8 @@ package AHTML.Node is
    --  is set to html.
    function HTML_Doc return Doc;
 
-   function Mk_Node (D : in out Doc; Name : String) return Node_Handle;
-   function Mk_Node
+   function Mk_Element (D : in out Doc; Name : String) return Node_Handle;
+   function Mk_Element
       (D : in out Doc; Name : AHTML.Strings.Name)
       return Node_Handle;
 
@@ -56,10 +56,21 @@ private
    package Index_Vec is new Ada.Containers.Vectors
       (Index_Type => Node_Handle, Element_Type => Node_Handle);
 
+   type Node_Kind is (Text, Element);
+
+   type Node_Inner (K : Node_Kind := Text) is record
+      case K is
+         when Text => Content : AHTML.Strings.Cooked;
+
+         when Element =>
+            Name : AHTML.Strings.Name;
+            Attrs : Attrs_Vec.Vector;
+            Children : Index_Vec.Vector;
+      end case;
+   end record;
+
    type Node is tagged record
-      Name : AHTML.Strings.Name;
-      Attrs : Attrs_Vec.Vector;
-      Children : Index_Vec.Vector;
+      Inner : Node_Inner;
    end record;
 
    package Node_Vec is new Ada.Containers.Vectors
@@ -69,5 +80,7 @@ private
       Doctype : Maybe_Doctype;
       Inner : Node_Vec.Vector;
    end record;
+
+   function Mk_Element (Name : AHTML.Strings.Name) return Node_Inner;
 
 end AHTML.Node;

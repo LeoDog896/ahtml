@@ -22,22 +22,19 @@ package body AHTML.Node is
       return D;
    end HTML_Doc;
 
-   function Mk_Node (D : in out Doc; Name : String) return Node_Handle is
-      (D.Mk_Node
+   function Mk_Element (D : in out Doc; Name : String) return Node_Handle is
+      (D.Mk_Element
          (AHTML.Strings.Name
             (AHTML.Strings.SU.To_Unbounded_String (Name))));
 
-   function Mk_Node (D : in out Doc; Name : AHTML.Strings.Name)
+   function Mk_Element (D : in out Doc; Name : AHTML.Strings.Name)
       return Node_Handle
    is
-      Attrs : Attrs_Vec.Vector;
-      Children : Index_Vec.Vector;
-      N : constant Node :=
-         (Name => Name, Attrs => Attrs, Children => Children);
+      N : constant Node := (Inner => Mk_Element (Name));
    begin
       D.Inner.Append (N);
       return D.Inner.Last_Index;
-   end Mk_Node;
+   end Mk_Element;
 
    function Mk_Attr
       (Key : AHTML.Strings.Name; Val : AHTML.Strings.Cooked)
@@ -47,7 +44,7 @@ package body AHTML.Node is
    is
       procedure Update (N : in out Node) is
       begin
-         N.Children.Append (C);
+         N.Inner.Children.Append (C);
       end Update;
    begin
       D.Inner.Update_Element (N, Update'Access);
@@ -57,7 +54,7 @@ package body AHTML.Node is
    is
       procedure Update (N : in out Node) is
       begin
-         N.Attrs.Append (A);
+         N.Inner.Attrs.Append (A);
       end Update;
    begin
       D.Inner.Update_Element (N, Update'Access);
@@ -74,11 +71,12 @@ package body AHTML.Node is
 
       procedure Stringify_Node (Target : Node)
       is
-         Have_Children : constant Boolean := Target.Children.Length /= 0;
+         Have_Children : constant Boolean :=
+            Target.Inner.Children.Length /= 0;
       begin
-         Tmp := @ & "<" & AHTML.Strings.Raw (Target.Name);
+         Tmp := @ & "<" & AHTML.Strings.Raw (Target.Inner.Name);
 
-         for Attr of Target.Attrs loop
+         for Attr of Target.Inner.Attrs loop
             Tmp := @ & " " &
                AHTML.Strings.Raw (Attr.Key) & "=" & '"' &
                AHTML.Strings.Raw (Attr.Val) & '"';
@@ -88,12 +86,12 @@ package body AHTML.Node is
             Tmp := @ & ">";
          end if;
 
-         for Child of Target.Children loop
+         for Child of Target.Inner.Children loop
             Stringify_Node (D.Inner (Child));
          end loop;
 
          if Have_Children then
-            Tmp := @ & ("</" & AHTML.Strings.Raw (Target.Name) & ">");
+            Tmp := @ & ("</" & AHTML.Strings.Raw (Target.Inner.Name) & ">");
          else
             Tmp := @ & "/>";
          end if;
@@ -108,5 +106,11 @@ package body AHTML.Node is
 
       return Tmp;
    end To_String;
+
+   function Mk_Element (Name : AHTML.Strings.Name) return Node_Inner
+   is ((K => Element,
+       Name => Name,
+       Attrs => Attrs_Vec.Empty_Vector,
+       Children => Index_Vec.Empty_Vector));
 
 end AHTML.Node;
