@@ -41,8 +41,13 @@ package AHTML.Node is
    procedure With_Child (D : in out Doc; N, C : Node_Handle);
    procedure With_Attribute (D : in out Doc; N : Node_Handle; A : Attr);
 
+   --  Stringify a specific node.
    function To_String (D : Doc; N : Node_Handle)
       return AHTML.Strings.Raw;
+
+   --  Stringify from the root of the document (assumed to be the first
+   --  inserted node.)
+   function To_String (D : Doc) return AHTML.Strings.Raw;
 
 private
 

@@ -118,9 +118,9 @@ package body AHTML.Node is
       begin
          case Target.Inner.K is
             when Element => Stringify_Element (Target.Inner);
-	    when Text =>
-	       Tmp := @ & AHTML.Strings.Raw (Target.Inner.Content);
-	 end case;
+            when Text =>
+               Tmp := @ & AHTML.Strings.Raw (Target.Inner.Content);
+         end case;
       end Stringify_Node;
 
    begin
@@ -132,6 +132,9 @@ package body AHTML.Node is
 
       return Tmp;
    end To_String;
+
+   function To_String (D : Doc) return AHTML.Strings.Raw
+      is (D.To_String (Node_Handle (0)));
 
    function Mk_Element (Name : AHTML.Strings.Name) return Node_Inner
    is ((K => Element,

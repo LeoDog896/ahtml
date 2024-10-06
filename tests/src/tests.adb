@@ -39,4 +39,5 @@ begin
    Put_Line (AHTML.Strings.To_String (Doc.To_String (Root)));
 
    Put_Line (AHTML.Strings.To_String (HTML_Doc.To_String (HTML_Root)));
+   Put_Line (AHTML.Strings.To_String (HTML_Doc.To_String));
 end Tests;
