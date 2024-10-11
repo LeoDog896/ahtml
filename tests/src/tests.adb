@@ -3,7 +3,7 @@
 --  file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 with AHTML.Node; use AHTML.Node;
-with AHTML.Strings;
+with AHTML.Strings; use AHTML.Strings;
 
 procedure Tests is
 
@@ -13,7 +13,7 @@ procedure Tests is
       (Doc : AHTML.Node.Doc; Expected : String)
    is
       Actual : constant String :=
-         AHTML.Strings.To_String (Doc.To_String);
+         AHTML.Strings.SU.To_String (Doc.To_String);
    begin
       if Actual /= Expected then
          raise Test_Failure;
@@ -28,9 +28,7 @@ procedure Tests is
       Text_Node : constant AHTML.Node.Node_Handle := Doc.Mk_Text ("test");
 
       Attr : constant AHTML.Node.Attr :=
-         AHTML.Node.Mk_Attr
-            (AHTML.Strings.To_Unbounded_String ("a"),
-            AHTML.Strings.To_Unbounded_String ("b"));
+         AHTML.Node.Mk_Attr (Denote ("a"), Cook ("b"));
 
    begin
       Assert_Becomes (Doc, "<html/>");
@@ -44,7 +42,7 @@ procedure Tests is
       Doc.With_Child (Body_Node, Text_Node);
       Assert_Becomes (Doc, "<html><body a=""b"">test</body></html>");
 
-      Doc.With_Doctype (AHTML.Strings.To_Unbounded_String ("html"));
+      Doc.With_Doctype (Cook ("html"));
       Assert_Becomes
          (Doc,
           "<!DOCTYPE html><html><body a=""b"">test</body></html>");

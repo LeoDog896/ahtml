@@ -77,6 +77,9 @@ package body AHTML.Node is
 
    function To_String (D : Doc; N : Node_Handle) return AHTML.Strings.Raw
    is
+
+      use SU;
+
       Tmp : AHTML.Strings.Raw;
 
       procedure Stringify_Element (Target : Node_Inner);

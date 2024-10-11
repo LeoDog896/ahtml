@@ -7,9 +7,9 @@ with Ada.Strings.Unbounded;
 package AHTML.Strings is
    package SU renames Ada.Strings.Unbounded;
 
-   type Raw is new SU.Unbounded_String;
+   subtype Raw is SU.Unbounded_String;
    --  Raw is an Unbounded_String meant for unescaped HTML and
-   --  HTML fragments. [TODO: make this a subtype]
+   --  HTML fragments.
 
    type Name is tagged private;
    --  Names are exclusively ASCII alphanumerics (WHATWG 13.1.2).
