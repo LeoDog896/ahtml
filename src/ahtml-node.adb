@@ -18,14 +18,12 @@ package body AHTML.Node is
    is
       D : Doc := Null_Doc;
    begin
-      D.With_Doctype (To_Unbounded_String ("html"));
+      D.With_Doctype (Cook ("html"));
       return D;
    end HTML_Doc;
 
    function Mk_Element (D : in out Doc; Name : String) return Node_Handle is
-      (D.Mk_Element
-         (AHTML.Strings.Name
-            (AHTML.Strings.SU.To_Unbounded_String (Name))));
+      (D.Mk_Element (AHTML.Strings.Denote (Name)));
 
    function Mk_Element (D : in out Doc; Name : AHTML.Strings.Name)
       return Node_Handle
@@ -37,9 +35,7 @@ package body AHTML.Node is
    end Mk_Element;
 
    function Mk_Text (D : in out Doc; Content : String) return Node_Handle is
-      (D.Mk_Text
-         (AHTML.Strings.Cooked
-             (AHTML.Strings.SU.To_Unbounded_String (Content))));
+      (D.Mk_Text (AHTML.Strings.Cook (Content)));
 
    function Mk_Text (D : in out Doc; Content : AHTML.Strings.Cooked)
       return Node_Handle
@@ -91,12 +87,12 @@ package body AHTML.Node is
          Have_Children : constant Boolean :=
             Target.Children.Length /= 0;
       begin
-         Tmp := @ & "<" & AHTML.Strings.Raw (Target.Name);
+         Tmp := @ & "<" & Target.Name.Unwrap;
 
          for Attr of Target.Attrs loop
             Tmp := @ & " " &
-               AHTML.Strings.Raw (Attr.Key) & "=" & '"' &
-               AHTML.Strings.Raw (Attr.Val) & '"';
+               Attr.Key.Unwrap & "=" & '"' &
+               Attr.Val.Unwrap & '"';
          end  loop;
 
          if Have_Children then
@@ -108,7 +104,7 @@ package body AHTML.Node is
          end loop;
 
          if Have_Children then
-            Tmp := @ & ("</" & AHTML.Strings.Raw (Target.Name) & ">");
+            Tmp := @ & ("</" & Target.Name.Unwrap & ">");
          else
             Tmp := @ & "/>";
          end if;
@@ -119,13 +115,13 @@ package body AHTML.Node is
          case Target.Inner.K is
             when Element => Stringify_Element (Target.Inner);
             when Text =>
-               Tmp := @ & AHTML.Strings.Raw (Target.Inner.Content);
+               Tmp := @ & Target.Inner.Content.Unwrap;
          end case;
       end Stringify_Node;
 
    begin
       if D.Doctype.Present then
-         Tmp := @ & "<!DOCTYPE " & AHTML.Strings.Raw (D.Doctype.Doctype) & ">";
+         Tmp := @ & "<!DOCTYPE " & D.Doctype.Doctype.Unwrap & ">";
       end if;
 
       Stringify_Node (D.Inner (N));

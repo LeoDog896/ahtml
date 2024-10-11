@@ -8,18 +8,31 @@ package AHTML.Strings is
    package SU renames Ada.Strings.Unbounded;
 
    type Raw is new SU.Unbounded_String;
-   --  Raw is an Unbounded_String meant for unescaped XML and HTML.
+   --  Raw is an Unbounded_String meant for unescaped HTML and
+   --  HTML fragments. [TODO: make this a subtype]
 
-   type Name is new SU.Unbounded_String;
-   --  NAMES are a liberally interpreted version of the XML
-   --  spec. I know, I'm sorry. Everything but angle brackets,
-   --  quotes, and whitespace are allowed.
+   type Name is tagged private;
+   --  Names are exclusively ASCII alphanumerics (WHATWG 13.1.2).
 
-   type Cooked is new SU.Unbounded_String;
+   type Cooked is tagged private;
    --  Cooked is an immutable and heap-allocated string type.
    --  Characters that must be escaped for HTML are escaped as
    --  necessary.
 
-   --  TODO: add dynamic predicates to check production rules
+   function Cook (Text : String) return Cooked;
+   function Denote (Text : String) return Name;
+
+   function Unwrap (N : Name) return Raw;
+   function Unwrap (C : Cooked) return Raw;
+
+private
+
+   type Name is tagged record
+      Inner : Raw;
+   end record;
+
+   type Cooked is tagged record
+      Inner : Raw;
+   end record;
 
 end AHTML.Strings;
